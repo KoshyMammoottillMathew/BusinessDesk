@@ -1,92 +1,30 @@
-import { useState } from 'react'
-import {
-  LayoutDashboard, WalletCards, Users, TrendingUp, ReceiptText,
-  FileText, FolderKanban, Package, UserRound, BarChart3, Target,
-  Settings, Database, Search, Bell, Plus, ArrowUpRight, ArrowDownRight,
-  Menu, X, ShieldCheck
-} from 'lucide-react'
+import { useEffect, useMemo, useState } from 'react'
+import { LayoutDashboard, WalletCards, Users, TrendingUp, ReceiptText, FileText, FolderKanban, Package, UserRound, BarChart3, Target, Settings, Database, Search, Bell, Plus, Menu, X, ShieldCheck } from 'lucide-react'
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
+import Setup from './components/Setup'
+import Finance from './components/Finance'
+import { getSettings, getTransactions, type BusinessSettings, type Transaction } from './database/db'
 
-const nav = [
-  ['Dashboard', LayoutDashboard], ['Finance', WalletCards], ['Customers', Users],
-  ['Sales', TrendingUp], ['Invoices', ReceiptText], ['Quotations', FileText],
-  ['Projects', FolderKanban], ['Inventory', Package], ['Team', UserRound],
-  ['Reports', BarChart3], ['Goals', Target],
-] as const
+const nav = [['Dashboard',LayoutDashboard],['Finance',WalletCards],['Customers',Users],['Sales',TrendingUp],['Invoices',ReceiptText],['Quotations',FileText],['Projects',FolderKanban],['Inventory',Package],['Team',UserRound],['Reports',BarChart3],['Goals',Target]] as const
 
-const revenueData = [
-  { month: 'May', revenue: 28400, expenses: 16400 },
-  { month: 'Jun', revenue: 32100, expenses: 17200 },
-  { month: 'Jul', revenue: 30500, expenses: 18100 },
-  { month: 'Aug', revenue: 38900, expenses: 19400 },
-  { month: 'Sep', revenue: 42100, expenses: 20500 },
-  { month: 'Oct', revenue: 48240, expenses: 21420 },
-]
-
-const money = (value: number) => `$${value.toLocaleString()}`
-
-function App() {
-  const [active, setActive] = useState('Dashboard')
-  const [menuOpen, setMenuOpen] = useState(false)
-
-  const metrics = [
-    { label: 'Revenue', value: '$48,240', change: '+14.6%', up: true },
-    { label: 'Expenses', value: '$21,420', change: '+4.5%', up: false },
-    { label: 'Net profit', value: '$26,820', change: '+23.9%', up: true },
-    { label: 'Receivable', value: '$8,450', change: '5 overdue', up: false },
-  ]
-
-  return <div className="app-shell">
-    <aside className={`sidebar ${menuOpen ? 'open' : ''}`}>
-      <div className="brand"><div className="brand-mark">B</div><div><strong>BusinessDesk</strong><span>Local business OS</span></div></div>
-      <button className="mobile-close" onClick={() => setMenuOpen(false)}><X size={20}/></button>
-      <nav>
-        {nav.map(([label, Icon]) => <button key={label} className={active === label ? 'active' : ''} onClick={() => { setActive(label); setMenuOpen(false) }}>
-          <Icon size={18}/><span>{label}</span>
-        </button>)}
-      </nav>
-      <div className="sidebar-bottom">
-        <button><Settings size={18}/>Settings</button>
-        <button><Database size={18}/>Backup & restore</button>
-        <div className="privacy-chip"><ShieldCheck size={16}/><span>Local-first<br/><small>Your data stays here</small></span></div>
-      </div>
-    </aside>
-
-    <main>
-      <header className="topbar">
-        <button className="menu-button" onClick={() => setMenuOpen(true)}><Menu size={21}/></button>
-        <div className="search"><Search size={17}/><input aria-label="Search" placeholder="Search anything…"/></div>
-        <div className="top-actions"><button className="icon-button"><Bell size={19}/></button><div className="avatar">KM</div></div>
-      </header>
-
-      <div className="content">
-        <section className="welcome">
-          <div><p className="eyebrow">OVERVIEW</p><h1>{active === 'Dashboard' ? 'Good afternoon' : active}</h1><p>{active === 'Dashboard' ? "Here’s how your business is performing today." : `${active} workspace is coming next in the build.`}</p></div>
-          <button className="primary"><Plus size={17}/>Quick add</button>
-        </section>
-
-        {active !== 'Dashboard' ? <section className="placeholder card"><div className="placeholder-icon"><LayoutDashboard/></div><h2>{active}</h2><p>This module is scaffolded in the navigation and will be connected to the local IndexedDB data layer as we build the product.</p></section> : <>
-          <section className="metrics">
-            {metrics.map(item => <article className="metric card" key={item.label}><div className="metric-top"><span>{item.label}</span><span className={item.up ? 'positive' : 'neutral'}>{item.up ? <ArrowUpRight size={14}/> : <ArrowDownRight size={14}/>} {item.change}</span></div><strong>{item.value}</strong><small>vs. previous month</small></article>)}
-          </section>
-
-          <section className="grid-two">
-            <article className="card chart-card"><div className="card-heading"><div><h2>Revenue overview</h2><p>Income and expenses over six months</p></div><select aria-label="Chart period"><option>Last 6 months</option></select></div>
-              <div className="chart"><ResponsiveContainer width="100%" height="100%"><AreaChart data={revenueData}><defs><linearGradient id="rev" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#635bff" stopOpacity={.28}/><stop offset="100%" stopColor="#635bff" stopOpacity={0}/></linearGradient></defs><CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#edf0f5"/><XAxis dataKey="month" axisLine={false} tickLine={false}/><YAxis axisLine={false} tickLine={false} tickFormatter={v => `$${v/1000}k`}/><Tooltip formatter={(v) => money(Number(v))}/><Area type="monotone" dataKey="revenue" stroke="#635bff" strokeWidth={2.5} fill="url(#rev)"/><Area type="monotone" dataKey="expenses" stroke="#aab2c0" strokeWidth={2} fill="transparent"/></AreaChart></ResponsiveContainer></div>
-            </article>
-
-            <article className="card"><div className="card-heading"><div><h2>Smart insights</h2><p>Calculated locally from your data</p></div></div><div className="insights"><div className="insight good"><span>↗</span><div><strong>Revenue is growing</strong><p>Revenue is 14.6% higher than last month.</p></div></div><div className="insight warn"><span>!</span><div><strong>5 invoices are overdue</strong><p>$8,450 is currently awaiting payment.</p></div></div><div className="insight"><span>◎</span><div><strong>Healthy margin</strong><p>Your current net margin is 55.6%.</p></div></div></div></article>
-          </section>
-
-          <section className="grid-two lower">
-            <article className="card"><div className="card-heading"><div><h2>Outstanding invoices</h2><p>Payments needing attention</p></div><button className="text-button">View all</button></div><div className="table-list">{[['INV-1042','Northstar Studio','$2,500','7 days'],['INV-1041','Arbor & Co.','$1,800','3 days'],['INV-1038','Lumina Works','$4,150','12 days']].map(row => <div className="table-row" key={row[0]}><div><strong>{row[0]}</strong><span>{row[1]}</span></div><strong>{row[2]}</strong><span className="overdue">{row[3]} overdue</span></div>)}</div></article>
-            <article className="card"><div className="card-heading"><div><h2>Sales pipeline</h2><p>Current opportunities</p></div><button className="text-button">Open CRM</button></div><div className="pipeline">{[['New leads',12,42],['Qualified',8,64],['Proposal',5,48],['Won',8,82]].map(([label,count,width]) => <div className="pipe" key={String(label)}><div><span>{label}</span><strong>{count}</strong></div><div className="bar"><i style={{width:`${width}%`}}/></div></div>)}</div></article>
-          </section>
-        </>}
-      </div>
-    </main>
-    {menuOpen && <div className="scrim" onClick={() => setMenuOpen(false)}/>} 
-  </div>
+function App(){
+ const[active,setActive]=useState('Dashboard'),[menuOpen,setMenuOpen]=useState(false),[loading,setLoading]=useState(true)
+ const[settings,setSettings]=useState<BusinessSettings>(),[transactions,setTransactions]=useState<Transaction[]>([])
+ const refresh=async()=>setTransactions(await getTransactions())
+ useEffect(()=>{(async()=>{setSettings(await getSettings());await refresh();setLoading(false)})()},[])
+ const formatter=useMemo(()=>new Intl.NumberFormat(undefined,{style:'currency',currency:settings?.currency||'USD'}),[settings?.currency])
+ const income=transactions.filter(t=>t.type==='income').reduce((s,t)=>s+t.amount,0),expenses=transactions.filter(t=>t.type==='expense').reduce((s,t)=>s+t.amount,0)
+ const chartData=useMemo(()=>{const months=new Map<string,{month:string,revenue:number,expenses:number}>();transactions.forEach(t=>{const d=new Date(`${t.date}T00:00:00`),key=`${d.getFullYear()}-${d.getMonth()}`,label=d.toLocaleString(undefined,{month:'short'});if(!months.has(key))months.set(key,{month:label,revenue:0,expenses:0});const item=months.get(key)!;t.type==='income'?item.revenue+=t.amount:item.expenses+=t.amount});return [...months.values()].slice(-6)},[transactions])
+ const greeting=()=>{const h=new Date().getHours();return h<12?'Good morning':h<18?'Good afternoon':'Good evening'}
+ if(loading)return <div className="loading">Loading BusinessDesk…</div>
+ if(!settings?.setupComplete)return <Setup onComplete={setSettings}/>
+ return <div className="app-shell"><aside className={`sidebar ${menuOpen?'open':''}`}><div className="brand"><div className="brand-mark">B</div><div><strong>BusinessDesk</strong><span>{settings.businessName}</span></div></div><button className="mobile-close" onClick={()=>setMenuOpen(false)}><X size={20}/></button><nav>{nav.map(([label,Icon])=><button key={label} className={active===label?'active':''} onClick={()=>{setActive(label);setMenuOpen(false)}}><Icon size={18}/><span>{label}</span></button>)}</nav><div className="sidebar-bottom"><button><Settings size={18}/>Settings</button><button><Database size={18}/>Backup & restore</button><div className="privacy-chip"><ShieldCheck size={16}/><span>Local-first<br/><small>Your data stays here</small></span></div></div></aside>
+ <main><header className="topbar"><button className="menu-button" onClick={()=>setMenuOpen(true)}><Menu size={21}/></button><div className="search"><Search size={17}/><input aria-label="Search" placeholder="Search anything…"/></div><div className="top-actions"><button className="icon-button"><Bell size={19}/></button><div className="avatar">{settings.businessName.slice(0,2).toUpperCase()}</div></div></header><div className="content"><section className="welcome"><div><p className="eyebrow">{active==='Dashboard'?'OVERVIEW':'WORKSPACE'}</p><h1>{active==='Dashboard'?greeting():active}</h1><p>{active==='Dashboard'?`Here’s how ${settings.businessName} is performing.`:`Manage your ${active.toLowerCase()} locally in BusinessDesk.`}</p></div>{active==='Dashboard'&&<button className="primary" onClick={()=>setActive('Finance')}><Plus size={17}/>Add transaction</button>}</section>
+ {active==='Finance'?<Finance transactions={transactions} currency={settings.currency} onChange={refresh}/>:active!=='Dashboard'?<section className="placeholder card"><div className="placeholder-icon"><LayoutDashboard/></div><h2>{active}</h2><p>This module is next in the BusinessDesk build. Your existing local data remains unchanged.</p></section>:<Dashboard income={income} expenses={expenses} formatter={formatter} chartData={chartData}/>}</div></main>{menuOpen&&<div className="scrim" onClick={()=>setMenuOpen(false)}/>}</div>
 }
 
+function Dashboard({income,expenses,formatter,chartData}:{income:number;expenses:number;formatter:Intl.NumberFormat;chartData:{month:string;revenue:number;expenses:number}[]}){
+ const profit=income-expenses
+ return <><section className="metrics"><article className="metric card"><div className="metric-top"><span>Revenue</span></div><strong>{formatter.format(income)}</strong><small>from your transactions</small></article><article className="metric card"><div className="metric-top"><span>Expenses</span></div><strong>{formatter.format(expenses)}</strong><small>from your transactions</small></article><article className="metric card"><div className="metric-top"><span>Net profit</span></div><strong>{formatter.format(profit)}</strong><small>revenue minus expenses</small></article><article className="metric card"><div className="metric-top"><span>Receivable</span></div><strong>{formatter.format(0)}</strong><small>connects to invoices next</small></article></section><section className="grid-two"><article className="card chart-card"><div className="card-heading"><div><h2>Revenue overview</h2><p>Your locally stored finance activity</p></div></div><div className="chart">{chartData.length?<ResponsiveContainer width="100%" height="100%"><AreaChart data={chartData}><CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#edf0f5"/><XAxis dataKey="month" axisLine={false} tickLine={false}/><YAxis axisLine={false} tickLine={false}/><Tooltip formatter={v=>formatter.format(Number(v))}/><Area type="monotone" dataKey="revenue" stroke="#635bff" strokeWidth={2.5} fill="#635bff18"/><Area type="monotone" dataKey="expenses" stroke="#aab2c0" strokeWidth={2} fill="transparent"/></AreaChart></ResponsiveContainer>:<div className="empty-chart"><strong>No finance data yet</strong><span>Add income or expenses in Finance to build this chart.</span></div>}</div></article><article className="card"><div className="card-heading"><div><h2>Smart insights</h2><p>Calculated locally from your data</p></div></div><div className="insights">{income===0&&expenses===0?<div className="insight"><span>◎</span><div><strong>Your workspace is ready</strong><p>Add transactions to start generating private, local business insights.</p></div></div>:<><div className="insight good"><span>↗</span><div><strong>{profit>=0?'Positive cash position':'Expenses exceed income'}</strong><p>Your current net cash flow is {formatter.format(profit)}.</p></div></div><div className="insight"><span>◎</span><div><strong>Expense ratio</strong><p>Expenses are {income?((expenses/income)*100).toFixed(1):'0'}% of recorded revenue.</p></div></div></>}</div></article></section><section className="grid-two lower"><article className="card placeholder-mini"><h2>Outstanding invoices</h2><p>Invoice tracking will connect here in the next module.</p></article><article className="card placeholder-mini"><h2>Sales pipeline</h2><p>CRM opportunities will connect here when the Sales module is enabled.</p></article></section></>
+}
 export default App
