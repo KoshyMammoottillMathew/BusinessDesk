@@ -1,4 +1,52 @@
 import{useState}from'react'
 import{ImagePlus,Trash2}from'lucide-react'
 import{saveSettings,type BusinessSettings}from'../database/db'
-export default function SettingsPanel({settings,onSaved}:{settings:BusinessSettings;onSaved:(s:BusinessSettings)=>void}){const[form,setForm]=useState(settings),[message,setMessage]=useState('');const update=(k:keyof BusinessSettings,v:string|number)=>setForm({...form,[k]:v});const logo=(file?:File)=>{if(!file)return;if(file.size>1500000){alert('Please choose a logo smaller than 1.5 MB.');return}const r=new FileReader();r.onload=()=>update('logo',String(r.result));r.readAsDataURL(file)};const submit=async(e:React.FormEvent)=>{e.preventDefault();const next={...form,taxRate:Number(form.taxRate)};await saveSettings(next);onSaved(next);setMessage('Business profile saved.');setTimeout(()=>setMessage(''),2500)};return <form className="settings-card card setup-form" onSubmit={submit}><div className="settings-logo-row"><div className="settings-logo">{form.logo?<img src={form.logo} alt="Business logo"/>:<span>{form.businessName.slice(0,2).toUpperCase()}</span>}</div><div><strong>Business logo</strong><p>Used in your profile and on invoices.</p><label className="secondary logo-upload"><ImagePlus size={14}/>Choose logo<input hidden type="file" accept="image/png,image/jpeg,image/webp" onChange={e=>logo(e.target.files?.[0])}/></label>{form.logo&&<button type="button" className="remove-logo" onClick={()=>update('logo','')}><Trash2 size={13}/>Remove</button>}</div></div><label>Business name<input required value={form.businessName} onChange={e=>update('businessName',e.target.value)}/></label><div className="form-row"><label>Business type<select value={form.businessType} onChange={e=>update('businessType',e.target.value)}><option>General Business</option><option>Freelancer</option><option>Agency / Service Business</option><option>Retail / Trading</option><option>Consultant</option></select></label><label>Country / region<input value={form.country} onChange={e=>update('country',e.target.value)}/></label></div><label>Company address<input value={form.address||''} onChange={e=>update('address',e.target.value)} placeholder="Optional"/></label><div className="form-row"><label>Phone number<input value={form.phone||''} onChange={e=>update('phone',e.target.value)} placeholder="Optional"/></label><label>GST ID<input value={form.gstId||''} onChange={e=>update('gstId',e.target.value)} placeholder="Optional"/></label></div><label>ARD<input value={form.ard||''} onChange={e=>update('ard',e.target.value)} placeholder="Optional"/></label><div className="form-row"><label>Currency<select value={form.currency} onChange={e=>update('currency',e.target.value)}><option value="INR">INR — ₹</option><option value="USD">USD — $</option><option value="AED">AED</option><option value="EUR">EUR — €</option><option value="GBP">GBP — £</option></select></label><label>Default GST %<input type="number" min="0" max="100" step="0.01" value={form.taxRate} onChange={e=>update('taxRate',e.target.value)}/></label></div><label>Financial year starts<select value={form.financialYearStart} onChange={e=>update('financialYearStart',e.target.value)}><option>January</option><option>April</option><option>July</option><option>October</option></select></label><div className="settings-save"><button className="primary" type="submit">Save changes</button>{message&&<span>{message}</span>}</div></form>
+
+export default function SettingsPanel({settings,onSaved}:{settings:BusinessSettings;onSaved:(s:BusinessSettings)=>void}){
+  const[form,setForm]=useState(settings),[message,setMessage]=useState('')
+  const update=(k:keyof BusinessSettings,v:string|number)=>setForm({...form,[k]:v})
+  const logo=(file?:File)=>{
+    if(!file)return
+    if(file.size>1500000){alert('Please choose a logo smaller than 1.5 MB.');return}
+    const r=new FileReader()
+    r.onload=()=>update('logo',String(r.result))
+    r.readAsDataURL(file)
+  }
+  const submit=async(e:React.FormEvent)=>{
+    e.preventDefault()
+    const next={...form,taxRate:Number(form.taxRate)}
+    await saveSettings(next)
+    onSaved(next)
+    setMessage('Business profile saved.')
+    setTimeout(()=>setMessage(''),2500)
+  }
+
+  return <form className="settings-card card setup-form" onSubmit={submit}>
+    <div className="settings-logo-row">
+      <div className="settings-logo">{form.logo?<img src={form.logo} alt="Business logo"/>:<span>{form.businessName.slice(0,2).toUpperCase()}</span>}</div>
+      <div>
+        <strong>Business logo</strong>
+        <p>Used in your profile and on invoices.</p>
+        <label className="secondary logo-upload"><ImagePlus size={14}/>Choose logo<input hidden type="file" accept="image/png,image/jpeg,image/webp" onChange={e=>logo(e.target.files?.[0])}/></label>
+        {form.logo&&<button type="button" className="remove-logo" onClick={()=>update('logo','')}><Trash2 size={13}/>Remove</button>}
+      </div>
+    </div>
+    <label>Business name<input required value={form.businessName} onChange={e=>update('businessName',e.target.value)}/></label>
+    <div className="form-row">
+      <label>Business type<select value={form.businessType} onChange={e=>update('businessType',e.target.value)}><option>General Business</option><option>Freelancer</option><option>Agency / Service Business</option><option>Retail / Trading</option><option>Consultant</option></select></label>
+      <label>Country / region<input value={form.country} onChange={e=>update('country',e.target.value)}/></label>
+    </div>
+    <label>Company address<input value={form.address||''} onChange={e=>update('address',e.target.value)} placeholder="Optional"/></label>
+    <div className="form-row">
+      <label>Phone number<input value={form.phone||''} onChange={e=>update('phone',e.target.value)} placeholder="Optional"/></label>
+      <label>GST ID<input value={form.gstId||''} onChange={e=>update('gstId',e.target.value)} placeholder="Optional"/></label>
+    </div>
+    <label>ARD<input value={form.ard||''} onChange={e=>update('ard',e.target.value)} placeholder="Optional"/></label>
+    <div className="form-row">
+      <label>Currency<select value={form.currency} onChange={e=>update('currency',e.target.value)}><option value="INR">INR — ₹</option><option value="USD">USD — $</option><option value="AED">AED</option><option value="EUR">EUR — €</option><option value="GBP">GBP — £</option></select></label>
+      <label>Default GST %<input type="number" min="0" max="100" step="0.01" value={form.taxRate} onChange={e=>update('taxRate',e.target.value)}/></label>
+    </div>
+    <label>Financial year starts<select value={form.financialYearStart} onChange={e=>update('financialYearStart',e.target.value)}><option>January</option><option>April</option><option>July</option><option>October</option></select></label>
+    <div className="settings-save"><button className="primary" type="submit">Save changes</button>{message&&<span>{message}</span>}</div>
+  </form>
+}
