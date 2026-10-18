@@ -6,6 +6,7 @@ import './enhancements.css'
 import './reset.css'
 import './customer-activity.css'
 import './invoices.css'
+import './invoice-interactive.css'
 import { startAutoBackupWatcher } from './database/autoBackup'
 
 startAutoBackupWatcher()
