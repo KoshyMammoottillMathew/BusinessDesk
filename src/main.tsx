@@ -12,6 +12,7 @@ import './projects-polish.css'
 import './inventory-polish.css'
 import './team-polish.css'
 import './goals-polish.css'
+import './reports-polish.css'
 import './workspace-polish.css'
 import { startAutoBackupWatcher } from './database/autoBackup'
 
