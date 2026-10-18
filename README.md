@@ -1,13 +1,13 @@
-# BusinessDesk
+# BusinessDesk by KMM
 
-**A free, privacy-first, local-first business management dashboard.**
+**A privacy-first, local-first business management workspace.**
 
-BusinessDesk is an open-source browser application for managing finance, customers, sales, invoices, quotations, projects, inventory, team records, goals, and business analytics from one workspace.
+BusinessDesk by KMM is an open-source browser application for managing finance, customers, sales, invoices, quotations, projects, inventory, team records, goals, and business analytics from one workspace.
 
 ## Product principles
 
 - No signup required
-- No BusinessDesk backend required for core functionality
+- No BusinessDesk by KMM backend required for core functionality
 - Business records stay in the user's browser by default
 - Local-first storage using IndexedDB
 - JSON backup and restore
@@ -16,61 +16,49 @@ BusinessDesk is an open-source browser application for managing finance, custome
 - Free core functionality with no paid dependency required
 - Open source under the MIT License
 
-> Browser storage is not a backup. Clearing site data, resetting the browser, or changing devices may remove locally stored records. Users should export regular backups.
+> Browser storage is not a backup. Clearing site data, resetting the browser, or changing devices may remove locally stored records. Export regular backups from Backup & Restore.
 
-## Planned V1 modules
+## Core modules
 
-- Dashboard and smart local insights
+- Dashboard and local business insights
 - Finance and cash flow
 - Customers / CRM
 - Sales pipeline
 - Invoices and quotations
-- Projects and tasks
+- Projects
 - Inventory / products and services
+- Stock movements and invoice fulfillment
 - Team records
 - Reports and analytics
 - Business goals
 - Settings and business setup
 - Backup / restore and data export
-- Demo mode
 
 ## Architecture
 
-BusinessDesk is designed as a static web application that can be deployed to GitHub Pages. The planned stack is React, TypeScript, Vite, IndexedDB, and a lightweight charting layer.
-
-The core application will not require a traditional server, account system, or cloud database. Optional cloud or AI integrations may be explored later, but the core product will continue to work without them.
-
-## Development roadmap
-
-1. Application foundation and design system
-2. Responsive application shell
-3. Local IndexedDB data layer
-4. Dashboard and demo dataset
-5. Finance
-6. CRM and sales pipeline
-7. Invoices and quotations
-8. Projects and tasks
-9. Inventory
-10. Team records
-11. Reports and goals
-12. Backup, restore, and CSV tools
-13. PWA support
-14. Accessibility, responsive, privacy, and security review
-15. GitHub Pages production deployment
+BusinessDesk by KMM is a static React + TypeScript application built with Vite. Business data is stored locally in IndexedDB and the application can be hosted as a static site on GitHub Pages without a traditional application server or cloud database.
 
 ## Privacy
 
-BusinessDesk is being designed so that business records are processed locally in the user's browser. The project will not intentionally collect customer records, financial records, invoices, notes, or other business data through a BusinessDesk server.
+The core application processes business records locally in the user's browser. The project does not require customer records, financial records, invoices, notes, or inventory records to be sent to a BusinessDesk by KMM server.
 
-A complete privacy document will be maintained in `PRIVACY.md` as the application develops.
+Because data is local to the browser and website origin, users should maintain regular exported backups before clearing browser data or moving to another device/browser.
+
+See `PRIVACY.md` for additional privacy information.
+
+## Deployment
+
+The production build is deployed to GitHub Pages using the workflow in `.github/workflows/deploy-pages.yml`.
+
+The Vite base path is configured for the `BusinessDesk` GitHub repository.
 
 ## Status
 
-🚧 **In active development.** The repository is not yet a production release.
+**V1 release preparation.** The application is under active development; production users should keep regular backups while features continue to evolve.
 
 ## Author
 
-Koshy Mammoottill Mathew
+Koshy Mammoottill Mathew (KMM)
 
 ## License
 
