@@ -25,6 +25,7 @@ export const addTransaction=async(t:Transaction)=>(await dbPromise).add('transac
 export const deleteTransaction=async(id:number)=>(await dbPromise).delete('transactions',id)
 export const getCustomers=async()=>(await dbPromise).getAll('customers')
 export const addCustomer=async(c:Customer)=>(await dbPromise).add('customers',c)
+export const updateCustomer=async(c:Customer)=>{if(c.id===undefined)throw new Error('Customer ID is required');return(await dbPromise).put('customers',c)}
 export const deleteCustomer=async(id:number)=>(await dbPromise).delete('customers',id)
 
 export async function exportBackup():Promise<BackupFile>{const db=await dbPromise;return{format:'BusinessDesk Backup',version:1,exportedAt:new Date().toISOString(),settings:await db.getAll('settings'),transactions:await db.getAll('transactions'),customers:await db.getAll('customers')}}
