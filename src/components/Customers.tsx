@@ -1,9 +1,10 @@
-import { useMemo,useState } from 'react'
+import { useEffect,useMemo,useState } from 'react'
 import { Plus,Search,Trash2,ArrowLeft,Mail,Phone,Building2,CalendarDays,Pencil,ReceiptText,FileText,FolderKanban,TrendingUp,ArrowRight } from 'lucide-react'
 import { addCustomer,deleteCustomer,updateCustomer,type Customer,type CustomerStatus,type Invoice,type Quotation,type Project,type Opportunity } from '../database/db'
 const empty={name:'',company:'',email:'',phone:'',status:'Active' as CustomerStatus,notes:''}
-export default function Customers({customers,invoices,quotations,projects,opportunities,currency,onChange,onOpenInvoice,onNavigate}:{customers:Customer[];invoices:Invoice[];quotations:Quotation[];projects:Project[];opportunities:Opportunity[];currency:string;onChange:()=>Promise<void>;onOpenInvoice:(id:number)=>void;onNavigate:(module:string)=>void}){
+export default function Customers({customers,invoices,quotations,projects,opportunities,currency,onChange,onOpenInvoice,onNavigate,openCustomerId,onOpened}:{customers:Customer[];invoices:Invoice[];quotations:Quotation[];projects:Project[];opportunities:Opportunity[];currency:string;onChange:()=>Promise<void>;onOpenInvoice:(id:number)=>void;onNavigate:(module:string)=>void;openCustomerId?:number;onOpened?:()=>void}){
  const[show,setShow]=useState(false),[query,setQuery]=useState(''),[selected,setSelected]=useState<Customer>(),[editing,setEditing]=useState(false),[form,setForm]=useState(empty),money=useMemo(()=>new Intl.NumberFormat(undefined,{style:'currency',currency}),[currency])
+ useEffect(()=>{if(openCustomerId===undefined)return;const customer=customers.find(c=>c.id===openCustomerId);if(customer){setSelected(customer);setEditing(false)}onOpened?.()},[openCustomerId,customers,onOpened])
  const filtered=useMemo(()=>customers.filter(c=>`${c.name} ${c.company} ${c.email} ${c.phone}`.toLowerCase().includes(query.toLowerCase())),[customers,query])
  const submit=async(e:React.FormEvent)=>{e.preventDefault();await addCustomer({...form,createdAt:new Date().toISOString()});setForm(empty);setShow(false);await onChange()}
  const saveEdit=async(e:React.FormEvent)=>{e.preventDefault();if(!selected)return;const updated={...selected,...form};await updateCustomer(updated);setSelected(updated);setEditing(false);await onChange()}
