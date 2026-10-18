@@ -7,6 +7,7 @@ import './reset.css'
 import './customer-activity.css'
 import './invoices.css'
 import './invoice-interactive.css'
+import './workspace-polish.css'
 import { startAutoBackupWatcher } from './database/autoBackup'
 
 startAutoBackupWatcher()
