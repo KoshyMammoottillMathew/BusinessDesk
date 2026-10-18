@@ -8,6 +8,7 @@ import './customer-activity.css'
 import './invoices.css'
 import './invoice-interactive.css'
 import './quotations.css'
+import './projects-polish.css'
 import './workspace-polish.css'
 import { startAutoBackupWatcher } from './database/autoBackup'
 
